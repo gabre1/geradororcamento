@@ -224,6 +224,147 @@
             opacity: 0.5;
         }
 
+        /* Modal de Compartilhamento */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 10000;
+            backdrop-filter: blur(5px);
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            max-width: 500px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.3);
+            animation: modalSlideIn 0.3s ease-out;
+        }
+
+        @keyframes modalSlideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-50px) scale(0.9);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        .modal-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .modal-header h2 {
+            color: #2c3e50;
+            font-size: 1.8rem;
+            margin-bottom: 10px;
+        }
+
+        .modal-header p {
+            color: #6c757d;
+            font-size: 1rem;
+        }
+
+        .share-options {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        .share-option {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 20px;
+            border: 2px solid #e9ecef;
+            border-radius: 15px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: white;
+        }
+
+        .share-option:hover {
+            border-color: #FF6B35;
+            background: #fff5f2;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(255, 107, 53, 0.1);
+        }
+
+        .share-option-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            color: white;
+            flex-shrink: 0;
+        }
+
+        .share-option-content h3 {
+            margin: 0 0 5px 0;
+            color: #2c3e50;
+            font-size: 1.1rem;
+        }
+
+        .share-option-content p {
+            margin: 0;
+            color: #6c757d;
+            font-size: 0.9rem;
+        }
+
+        .email-icon { background: linear-gradient(135deg, #ea4335 0%, #fbbc05 100%); }
+        .whatsapp-icon { background: linear-gradient(135deg, #25d366 0%, #128c7e 100%); }
+        .link-icon { background: linear-gradient(135deg, #1da1f2 0%, #0d8bd9 100%); }
+        .download-icon { background: linear-gradient(135deg, #FF6B35 0%, #FFA500 100%); }
+
+        .modal-footer {
+            text-align: center;
+            padding-top: 20px;
+            border-top: 1px solid #e9ecef;
+        }
+
+        .btn-close {
+            background: #6c757d;
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .btn-close:hover {
+            background: #5a6268;
+            transform: translateY(-1px);
+        }
+
+        .success-message {
+            background: linear-gradient(135deg, #56ab2f 0%, #a8e6cf 100%);
+            color: white;
+            padding: 15px 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            text-align: center;
+            font-weight: 600;
+        }
+
         @media (max-width: 768px) {
             .content {
                 padding: 20px;
@@ -365,7 +506,59 @@
         
         <!-- Indicador de Versão -->
         <div style="position: fixed; bottom: 10px; right: 10px; background: rgba(0,0,0,0.7); color: white; padding: 5px 10px; border-radius: 15px; font-size: 11px; font-family: monospace; z-index: 1000;">
-            v2.3.1
+            v2.4.0
+        </div>
+    </div>
+
+    <!-- Modal de Compartilhamento -->
+    <div id="shareModal" class="modal-overlay">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>📤 Compartilhar Orçamento</h2>
+                <p>Escolha como deseja compartilhar ou salvar seu orçamento</p>
+            </div>
+
+            <div id="successMessage" style="display: none;" class="success-message">
+                ✅ Orçamento processado com sucesso!
+            </div>
+
+            <div class="share-options">
+                <div class="share-option" onclick="compartilharEmail()">
+                    <div class="share-option-icon email-icon">📧</div>
+                    <div class="share-option-content">
+                        <h3>E-mail</h3>
+                        <p>Enviar por e-mail</p>
+                    </div>
+                </div>
+
+                <div class="share-option" onclick="compartilharWhatsApp()">
+                    <div class="share-option-icon whatsapp-icon">📱</div>
+                    <div class="share-option-content">
+                        <h3>WhatsApp</h3>
+                        <p>Compartilhar via WhatsApp</p>
+                    </div>
+                </div>
+
+                <div class="share-option" onclick="copiarLink()">
+                    <div class="share-option-icon link-icon">🔗</div>
+                    <div class="share-option-content">
+                        <h3>Copiar Link</h3>
+                        <p>Copiar link para compartilhar</p>
+                    </div>
+                </div>
+
+                <div class="share-option" onclick="baixarPDF()">
+                    <div class="share-option-icon download-icon">⬇️</div>
+                    <div class="share-option-content">
+                        <h3>Baixar PDF</h3>
+                        <p>Salvar no dispositivo</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="modal-footer">
+                <button class="btn-close" onclick="fecharModal()">Fechar</button>
+            </div>
         </div>
     </div>
 
@@ -459,6 +652,10 @@
             `;
         }
 
+        // Variáveis globais para o PDF
+        let pdfGerado = null;
+        let dadosOrcamento = null;
+
         function gerarPDF() {
             const empresaNome = document.getElementById('empresaNome').value.trim();
             const clienteNome = document.getElementById('clienteNome').value.trim();
@@ -473,6 +670,21 @@
                 return;
             }
 
+            // Armazenar dados do orçamento
+            dadosOrcamento = {
+                empresaNome,
+                clienteNome,
+                numeroOrcamento: `ORÇ-${Date.now().toString().slice(-6)}`,
+                dataFormatada: new Date().toLocaleDateString('pt-BR'),
+                totalGeral: itens.reduce((total, item) => total + item.valorTotal, 0)
+            };
+
+            // Gerar o PDF e abrir modal
+            criarPDF();
+
+        }
+
+        function criarPDF() {
             const { jsPDF } = window.jspdf;
             const doc = new jsPDF();
 
@@ -494,48 +706,46 @@
                 yPosition += logoHeight + 15;
 
                 // Continuar com o resto do PDF
-                continuarGeracaoPDF();
+                continuarGeracaoPDF(doc, pageWidth, margin, yPosition);
             };
             
             logoImg.onerror = function() {
                 // Se a logo não carregar, continuar sem ela
                 yPosition += 10;
-                continuarGeracaoPDF();
+                continuarGeracaoPDF(doc, pageWidth, margin, yPosition);
             };
             
             logoImg.src = 'https://drive.google.com/uc?export=view&id=1_Rj0dAUGkBMIfDnmw7LxjKa_bWZcNQd0';
 
-            function continuarGeracaoPDF() {
-                // Cabeçalho
-                doc.setFontSize(24);
-                doc.setFont(undefined, 'bold');
-                doc.setTextColor(0, 0, 0);
-                doc.text('ORÇAMENTO', pageWidth / 2, yPosition, { align: 'center' });
-                
-                yPosition += 20;
+        }
 
-                // Dados básicos
-                const hoje = new Date();
-                const dataFormatada = hoje.toLocaleDateString('pt-BR');
-                const numeroOrcamento = `ORÇ-${Date.now().toString().slice(-6)}`;
-                
-                doc.setFontSize(12);
-                doc.setFont(undefined, 'normal');
-                doc.text(`Data: ${dataFormatada}`, margin, yPosition);
-                doc.text(`Número: ${numeroOrcamento}`, pageWidth - margin, yPosition, { align: 'right' });
-                
-                yPosition += 25;
+        function continuarGeracaoPDF(doc, pageWidth, margin, yPosition) {
+            // Cabeçalho
+            doc.setFontSize(24);
+            doc.setFont(undefined, 'bold');
+            doc.setTextColor(0, 0, 0);
+            doc.text('ORÇAMENTO', pageWidth / 2, yPosition, { align: 'center' });
+            
+            yPosition += 20;
 
-                // Dados da empresa
-                doc.setFontSize(14);
-                doc.setFont(undefined, 'bold');
-                doc.text('DADOS DA EMPRESA:', margin, yPosition);
-                yPosition += 10;
+            // Dados básicos
+            doc.setFontSize(12);
+            doc.setFont(undefined, 'normal');
+            doc.text(`Data: ${dadosOrcamento.dataFormatada}`, margin, yPosition);
+            doc.text(`Número: ${dadosOrcamento.numeroOrcamento}`, pageWidth - margin, yPosition, { align: 'right' });
+            
+            yPosition += 25;
 
-                doc.setFontSize(11);
-                doc.setFont(undefined, 'normal');
-                doc.text(empresaNome, margin, yPosition);
-                yPosition += 6;
+            // Dados da empresa
+            doc.setFontSize(14);
+            doc.setFont(undefined, 'bold');
+            doc.text('DADOS DA EMPRESA:', margin, yPosition);
+            yPosition += 10;
+
+            doc.setFontSize(11);
+            doc.setFont(undefined, 'normal');
+            doc.text(dadosOrcamento.empresaNome, margin, yPosition);
+            yPosition += 6;
 
                 const empresaCNPJ = document.getElementById('empresaCNPJ').value.trim();
                 const empresaEndereco = document.getElementById('empresaEndereco').value.trim();
@@ -561,28 +771,28 @@
 
                 yPosition += 15;
 
-                // Dados do cliente
-                doc.setFontSize(14);
-                doc.setFont(undefined, 'bold');
-                doc.text('CLIENTE:', margin, yPosition);
-                yPosition += 10;
+            // Dados do cliente
+            doc.setFontSize(14);
+            doc.setFont(undefined, 'bold');
+            doc.text('CLIENTE:', margin, yPosition);
+            yPosition += 10;
 
-                doc.setFontSize(11);
-                doc.setFont(undefined, 'normal');
-                doc.text(`Nome: ${clienteNome}`, margin, yPosition);
+            doc.setFontSize(11);
+            doc.setFont(undefined, 'normal');
+            doc.text(`Nome: ${dadosOrcamento.clienteNome}`, margin, yPosition);
+            yPosition += 6;
+
+            const clienteEmail = document.getElementById('clienteEmail').value.trim();
+            const clienteTelefone = document.getElementById('clienteTelefone').value.trim();
+
+            if (clienteEmail) {
+                doc.text(`E-mail: ${clienteEmail}`, margin, yPosition);
                 yPosition += 6;
-
-                const clienteEmail = document.getElementById('clienteEmail').value.trim();
-                const clienteTelefone = document.getElementById('clienteTelefone').value.trim();
-
-                if (clienteEmail) {
-                    doc.text(`E-mail: ${clienteEmail}`, margin, yPosition);
-                    yPosition += 6;
-                }
-                if (clienteTelefone) {
-                    doc.text(`Telefone: ${clienteTelefone}`, margin, yPosition);
-                    yPosition += 6;
-                }
+            }
+            if (clienteTelefone) {
+                doc.text(`Telefone: ${clienteTelefone}`, margin, yPosition);
+                yPosition += 6;
+            }
 
                 yPosition += 20;
 
@@ -600,66 +810,137 @@
                 doc.line(margin, yPosition, pageWidth - margin, yPosition);
                 yPosition += 10;
 
-                // Itens
-                doc.setFont(undefined, 'normal');
-                let totalGeral = 0;
+            // Itens
+            doc.setFont(undefined, 'normal');
 
-                itens.forEach((item, index) => {
-                    // Verificar se precisa de nova página
-                    if (yPosition > 250) {
-                        doc.addPage();
-                        yPosition = 30;
-                    }
-
-                    doc.text(`${index + 1}. ${item.descricao}`, margin, yPosition);
-                    doc.text(item.quantidade.toString(), margin + 85, yPosition);
-                    doc.text(`R$ ${item.valorUnitario.toFixed(2).replace('.', ',')}`, margin + 115, yPosition);
-                    doc.text(`R$ ${item.valorTotal.toFixed(2).replace('.', ',')}`, margin + 155, yPosition);
-                    
-                    totalGeral += item.valorTotal;
-                    yPosition += 8;
-                });
-
-                // Linha antes do total
-                yPosition += 5;
-                doc.line(margin, yPosition, pageWidth - margin, yPosition);
-                yPosition += 15;
-
-                // Total geral
-                doc.setFontSize(16);
-                doc.setFont(undefined, 'bold');
-                doc.text('TOTAL GERAL:', margin + 100, yPosition);
-                doc.text(`R$ ${totalGeral.toFixed(2).replace('.', ',')}`, margin + 155, yPosition);
-
-                yPosition += 25;
-
-                // Observações
-                const observacoes = document.getElementById('observacoes').value.trim();
-                if (observacoes) {
-                    doc.setFontSize(12);
-                    doc.setFont(undefined, 'bold');
-                    doc.text('OBSERVAÇÕES:', margin, yPosition);
-                    yPosition += 10;
-
-                    doc.setFontSize(10);
-                    doc.setFont(undefined, 'normal');
-                    const linhasObservacoes = doc.splitTextToSize(observacoes, pageWidth - 2 * margin);
-                    doc.text(linhasObservacoes, margin, yPosition);
-                    yPosition += linhasObservacoes.length * 5 + 10;
+            itens.forEach((item, index) => {
+                // Verificar se precisa de nova página
+                if (yPosition > 250) {
+                    doc.addPage();
+                    yPosition = 30;
                 }
 
-                // Rodapé simples
-                yPosition = 280;
-                doc.setFontSize(9);
-                doc.setTextColor(100, 100, 100);
-                doc.text('Este orçamento tem validade de 30 dias.', margin, yPosition);
-                doc.text(`Gerado em ${dataFormatada}`, pageWidth - margin, yPosition, { align: 'right' });
+                doc.text(`${index + 1}. ${item.descricao}`, margin, yPosition);
+                doc.text(item.quantidade.toString(), margin + 85, yPosition);
+                doc.text(`R$ ${item.valorUnitario.toFixed(2).replace('.', ',')}`, margin + 115, yPosition);
+                doc.text(`R$ ${item.valorTotal.toFixed(2).replace('.', ',')}`, margin + 155, yPosition);
+                
+                yPosition += 8;
+            });
 
-                // Salvar o PDF
-                const nomeArquivo = `Orcamento_${numeroOrcamento}_${clienteNome.replace(/\s+/g, '_')}.pdf`;
-                doc.save(nomeArquivo);
+            // Linha antes do total
+            yPosition += 5;
+            doc.line(margin, yPosition, pageWidth - margin, yPosition);
+            yPosition += 15;
+
+            // Total geral
+            doc.setFontSize(16);
+            doc.setFont(undefined, 'bold');
+            doc.text('TOTAL GERAL:', margin + 100, yPosition);
+            doc.text(`R$ ${dadosOrcamento.totalGeral.toFixed(2).replace('.', ',')}`, margin + 155, yPosition);
+
+            yPosition += 25;
+
+            // Observações
+            const observacoes = document.getElementById('observacoes').value.trim();
+            if (observacoes) {
+                doc.setFontSize(12);
+                doc.setFont(undefined, 'bold');
+                doc.text('OBSERVAÇÕES:', margin, yPosition);
+                yPosition += 10;
+
+                doc.setFontSize(10);
+                doc.setFont(undefined, 'normal');
+                const linhasObservacoes = doc.splitTextToSize(observacoes, pageWidth - 2 * margin);
+                doc.text(linhasObservacoes, margin, yPosition);
+                yPosition += linhasObservacoes.length * 5 + 10;
+            }
+
+            // Rodapé simples
+            yPosition = 280;
+            doc.setFontSize(9);
+            doc.setTextColor(100, 100, 100);
+            doc.text('Este orçamento tem validade de 30 dias.', margin, yPosition);
+            doc.text(`Gerado em ${dadosOrcamento.dataFormatada}`, pageWidth - margin, yPosition, { align: 'right' });
+
+            // Armazenar o PDF gerado
+            pdfGerado = doc;
+            
+            // Mostrar modal de compartilhamento
+            document.getElementById('shareModal').style.display = 'flex';
+            document.getElementById('successMessage').style.display = 'block';
+        }
+
+        // Funções do modal de compartilhamento
+        function fecharModal() {
+            document.getElementById('shareModal').style.display = 'none';
+            document.getElementById('successMessage').style.display = 'none';
+        }
+
+        function baixarPDF() {
+            if (pdfGerado && dadosOrcamento) {
+                const nomeArquivo = `Orcamento_${dadosOrcamento.numeroOrcamento}_${dadosOrcamento.clienteNome.replace(/\s+/g, '_')}.pdf`;
+                pdfGerado.save(nomeArquivo);
+                fecharModal();
             }
         }
+
+        function compartilharEmail() {
+            if (dadosOrcamento) {
+                const assunto = `Orçamento ${dadosOrcamento.numeroOrcamento} - ${dadosOrcamento.empresaNome}`;
+                const corpo = `Olá,\n\nSegue em anexo o orçamento ${dadosOrcamento.numeroOrcamento} no valor de R$ ${dadosOrcamento.totalGeral.toFixed(2).replace('.', ',')}.\n\nData: ${dadosOrcamento.dataFormatada}\nCliente: ${dadosOrcamento.clienteNome}\n\nAtenciosamente,\n${dadosOrcamento.empresaNome}`;
+                
+                const mailtoLink = `mailto:?subject=${encodeURIComponent(assunto)}&body=${encodeURIComponent(corpo)}`;
+                window.open(mailtoLink, '_blank');
+                fecharModal();
+            }
+        }
+
+        function compartilharWhatsApp() {
+            if (dadosOrcamento) {
+                const mensagem = `🧾 *Orçamento ${dadosOrcamento.numeroOrcamento}*\n\n📅 Data: ${dadosOrcamento.dataFormatada}\n👤 Cliente: ${dadosOrcamento.clienteNome}\n💰 Valor: R$ ${dadosOrcamento.totalGeral.toFixed(2).replace('.', ',')}\n\n📋 Orçamento gerado pela ${dadosOrcamento.empresaNome}`;
+                
+                const whatsappLink = `https://wa.me/?text=${encodeURIComponent(mensagem)}`;
+                window.open(whatsappLink, '_blank');
+                fecharModal();
+            }
+        }
+
+        function copiarLink() {
+            if (dadosOrcamento) {
+                const textoParaCopiar = `Orçamento ${dadosOrcamento.numeroOrcamento} - ${dadosOrcamento.empresaNome}\nData: ${dadosOrcamento.dataFormatada}\nCliente: ${dadosOrcamento.clienteNome}\nValor: R$ ${dadosOrcamento.totalGeral.toFixed(2).replace('.', ',')}`;
+                
+                if (navigator.clipboard && navigator.clipboard.writeText) {
+                    navigator.clipboard.writeText(textoParaCopiar).then(() => {
+                        alert('✅ Informações do orçamento copiadas para a área de transferência!');
+                        fecharModal();
+                    }).catch(() => {
+                        // Fallback para navegadores mais antigos
+                        copiarTextoFallback(textoParaCopiar);
+                    });
+                } else {
+                    copiarTextoFallback(textoParaCopiar);
+                }
+            }
+        }
+
+        function copiarTextoFallback(texto) {
+            const textarea = document.createElement('textarea');
+            textarea.value = texto;
+            document.body.appendChild(textarea);
+            textarea.select();
+            document.execCommand('copy');
+            document.body.removeChild(textarea);
+            alert('✅ Informações do orçamento copiadas para a área de transferência!');
+            fecharModal();
+        }
+
+        // Fechar modal clicando fora dele
+        document.getElementById('shareModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                fecharModal();
+            }
+        });
 
         // Formatação automática de campos
         document.getElementById('empresaCNPJ').addEventListener('input', function(e) {
@@ -685,5 +966,5 @@
             e.target.value = value;
         });
     </script>
-<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'96a75619f5025cb6',t:'MTc1NDQwNzgzMi4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'96a75b94140fe10b',t:'MTc1NDQwODA1Ny4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
