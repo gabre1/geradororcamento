@@ -539,11 +539,11 @@
                     </div>
                 </div>
 
-                <div class="share-option" onclick="copiarLink()">
-                    <div class="share-option-icon link-icon">🔗</div>
+                <div class="share-option" onclick="copiarTexto()">
+                    <div class="share-option-icon link-icon">📋</div>
                     <div class="share-option-content">
-                        <h3>Copiar Link</h3>
-                        <p>Copiar link para compartilhar</p>
+                        <h3>Copiar Texto</h3>
+                        <p>Copiar resumo do orçamento</p>
                     </div>
                 </div>
 
@@ -721,97 +721,112 @@
 
         function continuarGeracaoPDF(doc, pageWidth, margin, yPosition) {
             // Cabeçalho
-            doc.setFontSize(24);
-            doc.setFont(undefined, 'bold');
-            doc.setTextColor(0, 0, 0);
+            doc.setFontSize(28);
+            doc.setFont('Roboto', 'bold');
+            doc.setTextColor(44, 62, 80);
             doc.text('ORÇAMENTO', pageWidth / 2, yPosition, { align: 'center' });
             
-            yPosition += 20;
+            yPosition += 25;
 
             // Dados básicos
             doc.setFontSize(12);
-            doc.setFont(undefined, 'normal');
+            doc.setFont('Roboto', 'normal');
             doc.text(`Data: ${dadosOrcamento.dataFormatada}`, margin, yPosition);
-            doc.text(`Número: ${dadosOrcamento.numeroOrcamento}`, pageWidth - margin, yPosition, { align: 'right' });
             
             yPosition += 25;
 
             // Dados da empresa
-            doc.setFontSize(14);
-            doc.setFont(undefined, 'bold');
+            doc.setFontSize(16);
+            doc.setFont('Roboto', 'bold');
+            doc.setTextColor(255, 107, 53);
             doc.text('DADOS DA EMPRESA:', margin, yPosition);
-            yPosition += 10;
+            yPosition += 12;
 
-            doc.setFontSize(11);
-            doc.setFont(undefined, 'normal');
+            doc.setFontSize(12);
+            doc.setFont('Roboto', 'bold');
+            doc.setTextColor(0, 0, 0);
             doc.text(dadosOrcamento.empresaNome, margin, yPosition);
-            yPosition += 6;
+            yPosition += 8;
 
                 const empresaCNPJ = document.getElementById('empresaCNPJ').value.trim();
                 const empresaEndereco = document.getElementById('empresaEndereco').value.trim();
                 const empresaTelefone = document.getElementById('empresaTelefone').value.trim();
                 const empresaEmail = document.getElementById('empresaEmail').value.trim();
 
+                doc.setFontSize(10);
+                doc.setFont('Roboto', 'normal');
+                doc.setTextColor(80, 80, 80);
+                
                 if (empresaCNPJ) {
                     doc.text(`CNPJ: ${empresaCNPJ}`, margin, yPosition);
-                    yPosition += 6;
+                    yPosition += 7;
                 }
                 if (empresaEndereco) {
                     doc.text(`Endereço: ${empresaEndereco}`, margin, yPosition);
-                    yPosition += 6;
+                    yPosition += 7;
                 }
                 if (empresaTelefone) {
                     doc.text(`Telefone: ${empresaTelefone}`, margin, yPosition);
-                    yPosition += 6;
+                    yPosition += 7;
                 }
                 if (empresaEmail) {
                     doc.text(`E-mail: ${empresaEmail}`, margin, yPosition);
-                    yPosition += 6;
+                    yPosition += 7;
                 }
 
                 yPosition += 15;
 
             // Dados do cliente
-            doc.setFontSize(14);
-            doc.setFont(undefined, 'bold');
+            doc.setFontSize(16);
+            doc.setFont('Roboto', 'bold');
+            doc.setTextColor(255, 107, 53);
             doc.text('CLIENTE:', margin, yPosition);
-            yPosition += 10;
+            yPosition += 12;
 
-            doc.setFontSize(11);
-            doc.setFont(undefined, 'normal');
-            doc.text(`Nome: ${dadosOrcamento.clienteNome}`, margin, yPosition);
-            yPosition += 6;
+            doc.setFontSize(12);
+            doc.setFont('Roboto', 'bold');
+            doc.setTextColor(0, 0, 0);
+            doc.text(dadosOrcamento.clienteNome, margin, yPosition);
+            yPosition += 8;
 
             const clienteEmail = document.getElementById('clienteEmail').value.trim();
             const clienteTelefone = document.getElementById('clienteTelefone').value.trim();
 
+            doc.setFontSize(10);
+            doc.setFont('Roboto', 'normal');
+            doc.setTextColor(80, 80, 80);
+            
             if (clienteEmail) {
                 doc.text(`E-mail: ${clienteEmail}`, margin, yPosition);
-                yPosition += 6;
+                yPosition += 7;
             }
             if (clienteTelefone) {
                 doc.text(`Telefone: ${clienteTelefone}`, margin, yPosition);
-                yPosition += 6;
+                yPosition += 7;
             }
 
                 yPosition += 20;
 
                 // Cabeçalho da tabela
                 doc.setFontSize(12);
-                doc.setFont(undefined, 'bold');
-                doc.text('ITEM', margin, yPosition);
-                doc.text('QTD', margin + 80, yPosition);
-                doc.text('VALOR UNIT.', margin + 110, yPosition);
-                doc.text('TOTAL', margin + 150, yPosition);
+                doc.setFont('Roboto', 'bold');
+                doc.setTextColor(255, 107, 53);
+                doc.text('DESCRIÇÃO', margin, yPosition);
+                doc.text('QTD', margin + 90, yPosition, { align: 'center' });
+                doc.text('VALOR UNIT.', margin + 120, yPosition, { align: 'center' });
+                doc.text('TOTAL', margin + 160, yPosition, { align: 'right' });
                 
                 // Linha abaixo do cabeçalho
-                yPosition += 5;
-                doc.setLineWidth(0.5);
+                yPosition += 6;
+                doc.setLineWidth(0.8);
+                doc.setDrawColor(255, 107, 53);
                 doc.line(margin, yPosition, pageWidth - margin, yPosition);
-                yPosition += 10;
+                yPosition += 12;
 
             // Itens
-            doc.setFont(undefined, 'normal');
+            doc.setFontSize(11);
+            doc.setFont('Roboto', 'normal');
+            doc.setTextColor(0, 0, 0);
 
             itens.forEach((item, index) => {
                 // Verificar se precisa de nova página
@@ -821,45 +836,52 @@
                 }
 
                 doc.text(`${index + 1}. ${item.descricao}`, margin, yPosition);
-                doc.text(item.quantidade.toString(), margin + 85, yPosition);
-                doc.text(`R$ ${item.valorUnitario.toFixed(2).replace('.', ',')}`, margin + 115, yPosition);
-                doc.text(`R$ ${item.valorTotal.toFixed(2).replace('.', ',')}`, margin + 155, yPosition);
+                doc.text(item.quantidade.toString(), margin + 90, yPosition, { align: 'center' });
+                doc.text(`R$ ${item.valorUnitario.toFixed(2).replace('.', ',')}`, margin + 120, yPosition, { align: 'center' });
+                doc.text(`R$ ${item.valorTotal.toFixed(2).replace('.', ',')}`, margin + 160, yPosition, { align: 'right' });
                 
-                yPosition += 8;
+                yPosition += 10;
             });
 
             // Linha antes do total
-            yPosition += 5;
+            yPosition += 8;
+            doc.setLineWidth(0.8);
+            doc.setDrawColor(255, 107, 53);
             doc.line(margin, yPosition, pageWidth - margin, yPosition);
-            yPosition += 15;
+            yPosition += 18;
 
             // Total geral
-            doc.setFontSize(16);
-            doc.setFont(undefined, 'bold');
-            doc.text('TOTAL GERAL:', margin + 100, yPosition);
-            doc.text(`R$ ${dadosOrcamento.totalGeral.toFixed(2).replace('.', ',')}`, margin + 155, yPosition);
+            doc.setFontSize(18);
+            doc.setFont('Roboto', 'bold');
+            doc.setTextColor(255, 107, 53);
+            doc.text('TOTAL GERAL:', margin + 80, yPosition);
+            doc.setTextColor(0, 0, 0);
+            doc.text(`R$ ${dadosOrcamento.totalGeral.toFixed(2).replace('.', ',')}`, margin + 160, yPosition, { align: 'right' });
 
             yPosition += 25;
 
             // Observações
             const observacoes = document.getElementById('observacoes').value.trim();
             if (observacoes) {
-                doc.setFontSize(12);
-                doc.setFont(undefined, 'bold');
+                doc.setFontSize(14);
+                doc.setFont('Roboto', 'bold');
+                doc.setTextColor(255, 107, 53);
                 doc.text('OBSERVAÇÕES:', margin, yPosition);
-                yPosition += 10;
+                yPosition += 12;
 
-                doc.setFontSize(10);
-                doc.setFont(undefined, 'normal');
+                doc.setFontSize(11);
+                doc.setFont('Roboto', 'normal');
+                doc.setTextColor(0, 0, 0);
                 const linhasObservacoes = doc.splitTextToSize(observacoes, pageWidth - 2 * margin);
                 doc.text(linhasObservacoes, margin, yPosition);
-                yPosition += linhasObservacoes.length * 5 + 10;
+                yPosition += linhasObservacoes.length * 6 + 12;
             }
 
             // Rodapé simples
-            yPosition = 280;
+            yPosition = 275;
             doc.setFontSize(9);
-            doc.setTextColor(100, 100, 100);
+            doc.setFont('Roboto', 'normal');
+            doc.setTextColor(120, 120, 120);
             doc.text('Este orçamento tem validade de 30 dias.', margin, yPosition);
             doc.text(`Gerado em ${dadosOrcamento.dataFormatada}`, pageWidth - margin, yPosition, { align: 'right' });
 
@@ -886,33 +908,83 @@
         }
 
         function compartilharEmail() {
-            if (dadosOrcamento) {
-                const assunto = `Orçamento ${dadosOrcamento.numeroOrcamento} - ${dadosOrcamento.empresaNome}`;
-                const corpo = `Olá,\n\nSegue em anexo o orçamento ${dadosOrcamento.numeroOrcamento} no valor de R$ ${dadosOrcamento.totalGeral.toFixed(2).replace('.', ',')}.\n\nData: ${dadosOrcamento.dataFormatada}\nCliente: ${dadosOrcamento.clienteNome}\n\nAtenciosamente,\n${dadosOrcamento.empresaNome}`;
+            if (dadosOrcamento && pdfGerado) {
+                // Criar blob do PDF
+                const pdfBlob = pdfGerado.output('blob');
+                const nomeArquivo = `Orcamento_${dadosOrcamento.clienteNome.replace(/\s+/g, '_')}.pdf`;
                 
+                // Criar URL temporária para o arquivo
+                const pdfUrl = URL.createObjectURL(pdfBlob);
+                
+                // Criar link temporário para download
+                const link = document.createElement('a');
+                link.href = pdfUrl;
+                link.download = nomeArquivo;
+                link.style.display = 'none';
+                document.body.appendChild(link);
+                
+                // Preparar dados para email
+                const assunto = `Orçamento - ${dadosOrcamento.empresaNome}`;
+                const corpo = `Olá,\n\nSegue em anexo o orçamento no valor de R$ ${dadosOrcamento.totalGeral.toFixed(2).replace('.', ',')}.\n\nData: ${dadosOrcamento.dataFormatada}\nCliente: ${dadosOrcamento.clienteNome}\n\nPor favor, baixe o arquivo PDF anexo.\n\nAtenciosamente,\n${dadosOrcamento.empresaNome}`;
+                
+                // Abrir cliente de email
                 const mailtoLink = `mailto:?subject=${encodeURIComponent(assunto)}&body=${encodeURIComponent(corpo)}`;
                 window.open(mailtoLink, '_blank');
+                
+                // Fazer download automático do PDF para anexar
+                link.click();
+                
+                // Limpar
+                document.body.removeChild(link);
+                URL.revokeObjectURL(pdfUrl);
+                
+                alert('📧 Cliente de e-mail aberto! O PDF foi baixado para você anexar manualmente.');
                 fecharModal();
             }
         }
 
         function compartilharWhatsApp() {
-            if (dadosOrcamento) {
-                const mensagem = `🧾 *Orçamento ${dadosOrcamento.numeroOrcamento}*\n\n📅 Data: ${dadosOrcamento.dataFormatada}\n👤 Cliente: ${dadosOrcamento.clienteNome}\n💰 Valor: R$ ${dadosOrcamento.totalGeral.toFixed(2).replace('.', ',')}\n\n📋 Orçamento gerado pela ${dadosOrcamento.empresaNome}`;
+            if (dadosOrcamento && pdfGerado) {
+                // Criar blob do PDF
+                const pdfBlob = pdfGerado.output('blob');
+                const nomeArquivo = `Orcamento_${dadosOrcamento.clienteNome.replace(/\s+/g, '_')}.pdf`;
                 
+                // Criar URL temporária para o arquivo
+                const pdfUrl = URL.createObjectURL(pdfBlob);
+                
+                // Criar link temporário para download
+                const link = document.createElement('a');
+                link.href = pdfUrl;
+                link.download = nomeArquivo;
+                link.style.display = 'none';
+                document.body.appendChild(link);
+                
+                // Fazer download do PDF
+                link.click();
+                
+                // Preparar mensagem para WhatsApp
+                const mensagem = `🧾 *Orçamento - ${dadosOrcamento.empresaNome}*\n\n📅 Data: ${dadosOrcamento.dataFormatada}\n👤 Cliente: ${dadosOrcamento.clienteNome}\n💰 Valor: R$ ${dadosOrcamento.totalGeral.toFixed(2).replace('.', ',')}\n\n📎 PDF baixado! Anexe o arquivo no WhatsApp.`;
+                
+                // Abrir WhatsApp
                 const whatsappLink = `https://wa.me/?text=${encodeURIComponent(mensagem)}`;
                 window.open(whatsappLink, '_blank');
+                
+                // Limpar
+                document.body.removeChild(link);
+                URL.revokeObjectURL(pdfUrl);
+                
+                alert('📱 WhatsApp aberto! O PDF foi baixado para você anexar na conversa.');
                 fecharModal();
             }
         }
 
-        function copiarLink() {
+        function copiarTexto() {
             if (dadosOrcamento) {
-                const textoParaCopiar = `Orçamento ${dadosOrcamento.numeroOrcamento} - ${dadosOrcamento.empresaNome}\nData: ${dadosOrcamento.dataFormatada}\nCliente: ${dadosOrcamento.clienteNome}\nValor: R$ ${dadosOrcamento.totalGeral.toFixed(2).replace('.', ',')}`;
+                const textoParaCopiar = `Orçamento - ${dadosOrcamento.empresaNome}\nData: ${dadosOrcamento.dataFormatada}\nCliente: ${dadosOrcamento.clienteNome}\nValor: R$ ${dadosOrcamento.totalGeral.toFixed(2).replace('.', ',')}`;
                 
                 if (navigator.clipboard && navigator.clipboard.writeText) {
                     navigator.clipboard.writeText(textoParaCopiar).then(() => {
-                        alert('✅ Informações do orçamento copiadas para a área de transferência!');
+                        alert('✅ Resumo do orçamento copiado para a área de transferência!');
                         fecharModal();
                     }).catch(() => {
                         // Fallback para navegadores mais antigos
@@ -931,7 +1003,7 @@
             textarea.select();
             document.execCommand('copy');
             document.body.removeChild(textarea);
-            alert('✅ Informações do orçamento copiadas para a área de transferência!');
+            alert('✅ Resumo do orçamento copiado para a área de transferência!');
             fecharModal();
         }
 
@@ -966,5 +1038,5 @@
             e.target.value = value;
         });
     </script>
-<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'96a75b94140fe10b',t:'MTc1NDQwODA1Ny4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'96a76a1be323e119',t:'MTc1NDQwODY1Mi4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
