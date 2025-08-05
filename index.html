@@ -764,6 +764,15 @@ Prazo de entrega: 30 dias a partir da confirmação do pedido.</textarea>
             document.getElementById('itemValorUnitario').value = '';
         }
 
+        function formatarMoeda(valor) {
+            return valor.toLocaleString('pt-BR', {
+                style: 'currency',
+                currency: 'BRL',
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2
+            });
+        }
+
         function atualizarTabelaItens() {
             const container = document.getElementById('itensContainer');
             
@@ -798,8 +807,8 @@ Prazo de entrega: 30 dias a partir da confirmação do pedido.</textarea>
                             <tr>
                                 <td data-label="Descrição">${item.descricao}</td>
                                 <td data-label="Qtd">${item.quantidade}</td>
-                                <td data-label="Valor Unit.">R$ ${item.valorUnitario.toFixed(2).replace('.', ',')}</td>
-                                <td data-label="Total">R$ ${item.valorTotal.toFixed(2).replace('.', ',')}</td>
+                                <td data-label="Valor Unit.">${formatarMoeda(item.valorUnitario)}</td>
+                                <td data-label="Total">${formatarMoeda(item.valorTotal)}</td>
                                 <td data-label="Ações">
                                     <button class="btn btn-danger" onclick="removerItem(${item.id})">
                                         🗑️ Remover
@@ -811,7 +820,7 @@ Prazo de entrega: 30 dias a partir da confirmação do pedido.</textarea>
                 </table>
                 <div class="total-section">
                     <h3>Total Geral</h3>
-                    <p>R$ ${totalGeral.toFixed(2).replace('.', ',')}</p>
+                    <p>${formatarMoeda(totalGeral)}</p>
                 </div>
             `;
         }
@@ -888,7 +897,7 @@ Prazo de entrega: 30 dias a partir da confirmação do pedido.</textarea>
             doc.setTextColor(44, 62, 80);
             doc.text('ORÇAMENTO', pageWidth / 2, yPosition, { align: 'center' });
             
-            yPosition += 15;
+            yPosition += 10;
 
             // Data do orçamento
             const dataAtual = new Date();
@@ -898,19 +907,13 @@ Prazo de entrega: 30 dias a partir da confirmação do pedido.</textarea>
             doc.setTextColor(120, 120, 120);
             doc.text(`Data: ${dataFormatada}`, pageWidth / 2, yPosition, { align: 'center' });
             
-            yPosition += 20;
+            yPosition += 15;
 
-            // Dados da empresa
-            doc.setFontSize(14);
-            doc.setFont('Roboto', 'bold');
-            doc.setTextColor(255, 107, 53);
-            doc.text('DADOS DA EMPRESA:', margin, yPosition);
-            yPosition += 10;
-
+            // Dados da empresa centralizados
             doc.setFontSize(12);
             doc.setFont('Roboto', 'bold');
             doc.setTextColor(0, 0, 0);
-            doc.text(dadosOrcamento.empresaNome, margin, yPosition);
+            doc.text(dadosOrcamento.empresaNome, pageWidth / 2, yPosition, { align: 'center' });
             yPosition += 8;
 
                 const empresaCNPJ = document.getElementById('empresaCNPJ').value.trim();
@@ -923,23 +926,23 @@ Prazo de entrega: 30 dias a partir da confirmação do pedido.</textarea>
                 doc.setTextColor(80, 80, 80);
                 
                 if (empresaCNPJ) {
-                    doc.text(`CNPJ: ${empresaCNPJ}`, margin, yPosition);
-                    yPosition += 7;
+                    doc.text(`CNPJ: ${empresaCNPJ}`, pageWidth / 2, yPosition, { align: 'center' });
+                    yPosition += 6;
                 }
                 if (empresaEndereco) {
-                    doc.text(`Endereço: ${empresaEndereco}`, margin, yPosition);
-                    yPosition += 7;
+                    doc.text(`Endereço: ${empresaEndereco}`, pageWidth / 2, yPosition, { align: 'center' });
+                    yPosition += 6;
                 }
                 if (empresaTelefone) {
-                    doc.text(`Telefone: ${empresaTelefone}`, margin, yPosition);
-                    yPosition += 7;
+                    doc.text(`Telefone: ${empresaTelefone}`, pageWidth / 2, yPosition, { align: 'center' });
+                    yPosition += 6;
                 }
                 if (empresaEmail) {
-                    doc.text(`E-mail: ${empresaEmail}`, margin, yPosition);
-                    yPosition += 7;
+                    doc.text(`E-mail: ${empresaEmail}`, pageWidth / 2, yPosition, { align: 'center' });
+                    yPosition += 6;
                 }
 
-                yPosition += 15;
+                yPosition += 20;
 
             // Dados do cliente
             doc.setFontSize(14);
@@ -981,33 +984,41 @@ Prazo de entrega: 30 dias a partir da confirmação do pedido.</textarea>
 
                 // Criar tabela profissional
                 const tableStartY = yPosition;
-                const rowHeight = 12;
-                const headerHeight = 15;
+                const rowHeight = 14;
+                const headerHeight = 16;
                 
-                // Definir larguras das colunas
+                // Definir larguras das colunas otimizadas
                 const colWidths = {
-                    item: 15,
-                    descricao: 85,
-                    quantidade: 25,
-                    valorUnit: 30,
+                    item: 18,
+                    descricao: 75,
+                    quantidade: 20,
+                    valorUnit: 35,
                     total: 35
                 };
                 
-                let currentX = margin;
+                const tableWidth = Object.values(colWidths).reduce((sum, width) => sum + width, 0);
+                const tableStartX = (pageWidth - tableWidth) / 2;
                 
                 // Desenhar cabeçalho da tabela com fundo colorido
                 doc.setFillColor(255, 107, 53);
-                doc.rect(margin, yPosition - 3, pageWidth - 2 * margin, headerHeight, 'F');
+                doc.rect(tableStartX, yPosition - 3, tableWidth, headerHeight, 'F');
+                
+                // Bordas do cabeçalho
+                doc.setDrawColor(255, 107, 53);
+                doc.setLineWidth(0.5);
+                doc.rect(tableStartX, yPosition - 3, tableWidth, headerHeight);
                 
                 // Texto do cabeçalho
-                doc.setFontSize(11);
+                doc.setFontSize(10);
                 doc.setFont('Roboto', 'bold');
                 doc.setTextColor(255, 255, 255);
                 
-                doc.text('ITEM', currentX + 2, yPosition + 8);
+                let currentX = tableStartX;
+                
+                doc.text('ITEM', currentX + colWidths.item/2, yPosition + 8, { align: 'center' });
                 currentX += colWidths.item;
                 
-                doc.text('DESCRIÇÃO', currentX + 2, yPosition + 8);
+                doc.text('DESCRIÇÃO', currentX + 3, yPosition + 8);
                 currentX += colWidths.descricao;
                 
                 doc.text('QTD', currentX + colWidths.quantidade/2, yPosition + 8, { align: 'center' });
@@ -1021,7 +1032,7 @@ Prazo de entrega: 30 dias a partir da confirmação do pedido.</textarea>
                 yPosition += headerHeight;
 
             // Itens da tabela
-            doc.setFontSize(10);
+            doc.setFontSize(9);
             doc.setFont('Roboto', 'normal');
             doc.setTextColor(0, 0, 0);
 
@@ -1033,16 +1044,20 @@ Prazo de entrega: 30 dias a partir da confirmação do pedido.</textarea>
                     
                     // Redesenhar cabeçalho na nova página
                     doc.setFillColor(255, 107, 53);
-                    doc.rect(margin, yPosition - 3, pageWidth - 2 * margin, headerHeight, 'F');
+                    doc.rect(tableStartX, yPosition - 3, tableWidth, headerHeight, 'F');
                     
-                    doc.setFontSize(11);
+                    doc.setDrawColor(255, 107, 53);
+                    doc.setLineWidth(0.5);
+                    doc.rect(tableStartX, yPosition - 3, tableWidth, headerHeight);
+                    
+                    doc.setFontSize(10);
                     doc.setFont('Roboto', 'bold');
                     doc.setTextColor(255, 255, 255);
                     
-                    currentX = margin;
-                    doc.text('ITEM', currentX + 2, yPosition + 8);
+                    currentX = tableStartX;
+                    doc.text('ITEM', currentX + colWidths.item/2, yPosition + 8, { align: 'center' });
                     currentX += colWidths.item;
-                    doc.text('DESCRIÇÃO', currentX + 2, yPosition + 8);
+                    doc.text('DESCRIÇÃO', currentX + 3, yPosition + 8);
                     currentX += colWidths.descricao;
                     doc.text('QTD', currentX + colWidths.quantidade/2, yPosition + 8, { align: 'center' });
                     currentX += colWidths.quantidade;
@@ -1052,7 +1067,7 @@ Prazo de entrega: 30 dias a partir da confirmação do pedido.</textarea>
                     
                     yPosition += headerHeight;
                     
-                    doc.setFontSize(10);
+                    doc.setFontSize(9);
                     doc.setFont('Roboto', 'normal');
                     doc.setTextColor(0, 0, 0);
                 }
@@ -1060,46 +1075,56 @@ Prazo de entrega: 30 dias a partir da confirmação do pedido.</textarea>
                 // Alternar cor de fundo das linhas
                 if (index % 2 === 0) {
                     doc.setFillColor(248, 249, 250);
-                    doc.rect(margin, yPosition - 2, pageWidth - 2 * margin, rowHeight, 'F');
+                    doc.rect(tableStartX, yPosition - 2, tableWidth, rowHeight, 'F');
                 }
                 
                 // Desenhar bordas da tabela
                 doc.setDrawColor(220, 220, 220);
-                doc.setLineWidth(0.3);
+                doc.setLineWidth(0.2);
                 
-                currentX = margin;
+                currentX = tableStartX;
                 
                 // Coluna ITEM
                 doc.line(currentX, yPosition - 2, currentX, yPosition + rowHeight - 2);
-                doc.text((index + 1).toString(), currentX + colWidths.item/2, yPosition + 7, { align: 'center' });
+                doc.text((index + 1).toString(), currentX + colWidths.item/2, yPosition + 8, { align: 'center' });
                 currentX += colWidths.item;
                 
                 // Coluna DESCRIÇÃO
                 doc.line(currentX, yPosition - 2, currentX, yPosition + rowHeight - 2);
-                const descricaoTruncada = item.descricao.length > 35 ? item.descricao.substring(0, 32) + '...' : item.descricao;
-                doc.text(descricaoTruncada, currentX + 2, yPosition + 7);
+                const descricaoTruncada = item.descricao.length > 32 ? item.descricao.substring(0, 29) + '...' : item.descricao;
+                doc.text(descricaoTruncada, currentX + 3, yPosition + 8);
                 currentX += colWidths.descricao;
                 
                 // Coluna QUANTIDADE
                 doc.line(currentX, yPosition - 2, currentX, yPosition + rowHeight - 2);
-                doc.text(item.quantidade.toString(), currentX + colWidths.quantidade/2, yPosition + 7, { align: 'center' });
+                doc.text(item.quantidade.toString(), currentX + colWidths.quantidade/2, yPosition + 8, { align: 'center' });
                 currentX += colWidths.quantidade;
                 
                 // Coluna VALOR UNITÁRIO
                 doc.line(currentX, yPosition - 2, currentX, yPosition + rowHeight - 2);
-                doc.text(`R$ ${item.valorUnitario.toFixed(2).replace('.', ',')}`, currentX + colWidths.valorUnit/2, yPosition + 7, { align: 'center' });
+                const valorUnitFormatado = item.valorUnitario.toLocaleString('pt-BR', {
+                    style: 'currency',
+                    currency: 'BRL',
+                    minimumFractionDigits: 2
+                });
+                doc.text(valorUnitFormatado, currentX + colWidths.valorUnit/2, yPosition + 8, { align: 'center' });
                 currentX += colWidths.valorUnit;
                 
                 // Coluna TOTAL
                 doc.line(currentX, yPosition - 2, currentX, yPosition + rowHeight - 2);
-                doc.text(`R$ ${item.valorTotal.toFixed(2).replace('.', ',')}`, currentX + colWidths.total/2, yPosition + 7, { align: 'center' });
+                const valorTotalFormatado = item.valorTotal.toLocaleString('pt-BR', {
+                    style: 'currency',
+                    currency: 'BRL',
+                    minimumFractionDigits: 2
+                });
+                doc.text(valorTotalFormatado, currentX + colWidths.total/2, yPosition + 8, { align: 'center' });
                 currentX += colWidths.total;
                 
                 // Linha direita da tabela
                 doc.line(currentX, yPosition - 2, currentX, yPosition + rowHeight - 2);
                 
                 // Linha horizontal inferior
-                doc.line(margin, yPosition + rowHeight - 2, pageWidth - margin, yPosition + rowHeight - 2);
+                doc.line(tableStartX, yPosition + rowHeight - 2, tableStartX + tableWidth, yPosition + rowHeight - 2);
                 
                 yPosition += rowHeight;
             });
@@ -1107,20 +1132,29 @@ Prazo de entrega: 30 dias a partir da confirmação do pedido.</textarea>
             // Linha final da tabela
             doc.setLineWidth(0.5);
             doc.setDrawColor(255, 107, 53);
-            doc.line(margin, yPosition, pageWidth - margin, yPosition);
+            doc.line(tableStartX, yPosition, tableStartX + tableWidth, yPosition);
             
             yPosition += 15;
 
-            // Total geral com destaque
-            doc.setFillColor(255, 107, 53);
-            doc.rect(margin + 100, yPosition - 5, 90, 20, 'F');
+            // Total geral com destaque centralizado
+            const totalBoxWidth = 90;
+            const totalBoxX = (pageWidth - totalBoxWidth) / 2;
             
-            doc.setFontSize(14);
+            doc.setFillColor(255, 107, 53);
+            doc.rect(totalBoxX, yPosition - 5, totalBoxWidth, 20, 'F');
+            
+            doc.setFontSize(12);
             doc.setFont('Roboto', 'bold');
             doc.setTextColor(255, 255, 255);
-            doc.text('TOTAL GERAL:', margin + 105, yPosition + 5);
-            doc.setFontSize(16);
-            doc.text(`R$ ${dadosOrcamento.totalGeral.toFixed(2).replace('.', ',')}`, margin + 185, yPosition + 10, { align: 'right' });
+            doc.text('TOTAL GERAL:', totalBoxX + 5, yPosition + 5);
+            
+            doc.setFontSize(14);
+            const totalFormatado = dadosOrcamento.totalGeral.toLocaleString('pt-BR', {
+                style: 'currency',
+                currency: 'BRL',
+                minimumFractionDigits: 2
+            });
+            doc.text(totalFormatado, totalBoxX + totalBoxWidth - 5, yPosition + 10, { align: 'right' });
 
             yPosition += 30;
 
@@ -1286,7 +1320,12 @@ Prazo de entrega: 30 dias a partir da confirmação do pedido.</textarea>
                 ctx.fillStyle = '#2c3e50';
                 
                 itensParaMostrar.forEach((item, index) => {
-                    const textoItem = `${index + 1}. ${item.descricao} - Qtd: ${item.quantidade} - R$ ${item.valorTotal.toFixed(2).replace('.', ',')}`;
+                    const valorFormatado = item.valorTotal.toLocaleString('pt-BR', {
+                        style: 'currency',
+                        currency: 'BRL',
+                        minimumFractionDigits: 2
+                    });
+                    const textoItem = `${index + 1}. ${item.descricao} - Qtd: ${item.quantidade} - ${valorFormatado}`;
                     ctx.fillText(textoItem, 50, yPos);
                     yPos += 25;
                 });
@@ -1307,7 +1346,12 @@ Prazo de entrega: 30 dias a partir da confirmação do pedido.</textarea>
                 yPos += 40;
                 ctx.font = 'bold 32px Roboto, Arial, sans-serif';
                 ctx.fillStyle = '#2c3e50';
-                ctx.fillText(`R$ ${dadosOrcamento.totalGeral.toFixed(2).replace('.', ',')}`, 50, yPos);
+                const totalImageFormatado = dadosOrcamento.totalGeral.toLocaleString('pt-BR', {
+                    style: 'currency',
+                    currency: 'BRL',
+                    minimumFractionDigits: 2
+                });
+                ctx.fillText(totalImageFormatado, 50, yPos);
                 
                 // Rodapé
                 yPos = canvas.height - 30;
@@ -1429,5 +1473,5 @@ Prazo de entrega: 30 dias a partir da confirmação do pedido.</textarea>
             validarCampo(e.target);
         });
     </script>
-<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'96a7b11523bd45a6',t:'MTc1NDQxMTU1OS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'96a7c13e65b064e5',t:'MTc1NDQxMjIyMS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
