@@ -472,212 +472,155 @@
             const { jsPDF } = window.jspdf;
             const doc = new jsPDF();
 
-            // Configurações
+            // Configurações básicas
             const pageWidth = doc.internal.pageSize.width;
-            const pageHeight = doc.internal.pageSize.height;
-            const margin = 25;
+            const margin = 20;
             let yPosition = 30;
 
-            // Cores (tons de verde)
-            const primaryGreen = [34, 139, 34]; // Verde principal
-            const lightGreen = [144, 238, 144]; // Verde claro
-            const darkGray = [64, 64, 64]; // Cinza escuro
-
-            // Cabeçalho com fundo verde
-            doc.setFillColor(...primaryGreen);
-            doc.rect(0, 0, pageWidth, 60, 'F');
-
-            // Logo da Fenix Fardamentos
-            const logoUrl = 'https://drive.google.com/uc?export=view&id=1_Rj0dAUGkBMIfDnmw7LxjKa_bWZcNQd0';
-
-            // Adicionar logo no cabeçalho
-            try {
-                doc.addImage(logoUrl, 'PNG', margin, 10, 50, 20);
-            } catch (e) {
-                // Fallback caso a logo não carregue
-                doc.setTextColor(255, 255, 255);
-                doc.setFontSize(20);
-                doc.setFont(undefined, 'bold');
-                doc.text('🔥 FENIX', margin, 20);
-                doc.setFontSize(12);
-                doc.text('FARDAMENTOS', margin, 30);
-            }
-
-            // Nome da empresa em branco no cabeçalho (ao lado da logo)
-            doc.setTextColor(255, 255, 255);
-            doc.setFontSize(22);
+            // Cabeçalho simples
+            doc.setFontSize(24);
             doc.setFont(undefined, 'bold');
-            doc.text(empresaNome, margin + 60, 25);
+            doc.setTextColor(0, 0, 0);
+            doc.text('ORÇAMENTO', pageWidth / 2, yPosition, { align: 'center' });
+            
+            yPosition += 20;
 
-            // Título "ORÇAMENTO" no cabeçalho
-            doc.setFontSize(18);
-            doc.text('ORÇAMENTO', pageWidth - margin, 25, { align: 'right' });
-
-            // Resetar cor do texto
-            doc.setTextColor(...darkGray);
-            yPosition = 80;
-
-            // Data e número do orçamento
+            // Dados básicos
             const hoje = new Date();
             const dataFormatada = hoje.toLocaleDateString('pt-BR');
             const numeroOrcamento = `ORÇ-${Date.now().toString().slice(-6)}`;
             
+            doc.setFontSize(12);
+            doc.setFont(undefined, 'normal');
+            doc.text(`Data: ${dataFormatada}`, margin, yPosition);
+            doc.text(`Número: ${numeroOrcamento}`, pageWidth - margin, yPosition, { align: 'right' });
+            
+            yPosition += 25;
+
+            // Dados da empresa
+            doc.setFontSize(14);
+            doc.setFont(undefined, 'bold');
+            doc.text('DADOS DA EMPRESA:', margin, yPosition);
+            yPosition += 10;
+
             doc.setFontSize(11);
             doc.setFont(undefined, 'normal');
-            doc.text(`Data: ${dataFormatada}`, pageWidth - margin, yPosition, { align: 'right' });
-            doc.text(`Nº: ${numeroOrcamento}`, pageWidth - margin, yPosition + 6, { align: 'right' });
-
-            // Dados da empresa em caixa
-            yPosition += 5;
-            doc.setFillColor(248, 248, 248);
-            doc.rect(margin, yPosition, pageWidth - 2 * margin, 35, 'F');
-            doc.setDrawColor(200, 200, 200);
-            doc.rect(margin, yPosition, pageWidth - 2 * margin, 35, 'S');
-
-            yPosition += 10;
-            doc.setFontSize(10);
-            doc.setFont(undefined, 'bold');
-            doc.setTextColor(...primaryGreen);
-            doc.text('DADOS DA EMPRESA', margin + 5, yPosition);
-
-            doc.setTextColor(...darkGray);
-            doc.setFont(undefined, 'normal');
-            yPosition += 8;
+            doc.text(empresaNome, margin, yPosition);
+            yPosition += 6;
 
             const empresaCNPJ = document.getElementById('empresaCNPJ').value.trim();
             const empresaEndereco = document.getElementById('empresaEndereco').value.trim();
             const empresaTelefone = document.getElementById('empresaTelefone').value.trim();
             const empresaEmail = document.getElementById('empresaEmail').value.trim();
 
-            let infoEmpresa = [];
-            if (empresaCNPJ) infoEmpresa.push(`CNPJ: ${empresaCNPJ}`);
-            if (empresaEndereco) infoEmpresa.push(`${empresaEndereco}`);
-            if (empresaTelefone) infoEmpresa.push(`Tel: ${empresaTelefone}`);
-            if (empresaEmail) infoEmpresa.push(`Email: ${empresaEmail}`);
+            if (empresaCNPJ) {
+                doc.text(`CNPJ: ${empresaCNPJ}`, margin, yPosition);
+                yPosition += 6;
+            }
+            if (empresaEndereco) {
+                doc.text(`Endereço: ${empresaEndereco}`, margin, yPosition);
+                yPosition += 6;
+            }
+            if (empresaTelefone) {
+                doc.text(`Telefone: ${empresaTelefone}`, margin, yPosition);
+                yPosition += 6;
+            }
+            if (empresaEmail) {
+                doc.text(`E-mail: ${empresaEmail}`, margin, yPosition);
+                yPosition += 6;
+            }
 
-            infoEmpresa.forEach((info, index) => {
-                if (index < 2) {
-                    doc.text(info, margin + 5, yPosition + (index * 5));
-                } else {
-                    doc.text(info, margin + 100, yPosition + ((index - 2) * 5));
-                }
-            });
+            yPosition += 15;
 
-            yPosition += 45;
-
-            // Dados do cliente em caixa
-            doc.setFillColor(248, 248, 248);
-            doc.rect(margin, yPosition, pageWidth - 2 * margin, 30, 'F');
-            doc.setDrawColor(200, 200, 200);
-            doc.rect(margin, yPosition, pageWidth - 2 * margin, 30, 'S');
-
-            yPosition += 10;
-            doc.setFontSize(10);
+            // Dados do cliente
+            doc.setFontSize(14);
             doc.setFont(undefined, 'bold');
-            doc.setTextColor(...primaryGreen);
-            doc.text('CLIENTE', margin + 5, yPosition);
+            doc.text('CLIENTE:', margin, yPosition);
+            yPosition += 10;
 
-            doc.setTextColor(...darkGray);
+            doc.setFontSize(11);
             doc.setFont(undefined, 'normal');
-            yPosition += 8;
+            doc.text(`Nome: ${clienteNome}`, margin, yPosition);
+            yPosition += 6;
 
             const clienteEmail = document.getElementById('clienteEmail').value.trim();
             const clienteTelefone = document.getElementById('clienteTelefone').value.trim();
 
-            doc.text(`Nome: ${clienteNome}`, margin + 5, yPosition);
             if (clienteEmail) {
-                doc.text(`Email: ${clienteEmail}`, margin + 5, yPosition + 5);
+                doc.text(`E-mail: ${clienteEmail}`, margin, yPosition);
+                yPosition += 6;
             }
             if (clienteTelefone) {
-                doc.text(`Tel: ${clienteTelefone}`, margin + 100, yPosition);
+                doc.text(`Telefone: ${clienteTelefone}`, margin, yPosition);
+                yPosition += 6;
             }
 
-            yPosition += 35;
+            yPosition += 20;
 
-            // Cabeçalho da tabela com fundo verde
-            doc.setFillColor(...primaryGreen);
-            doc.rect(margin, yPosition, pageWidth - 2 * margin, 12, 'F');
-
-            doc.setTextColor(255, 255, 255);
-            doc.setFontSize(10);
+            // Cabeçalho da tabela
+            doc.setFontSize(12);
             doc.setFont(undefined, 'bold');
-            doc.text('DESCRIÇÃO', margin + 3, yPosition + 8);
-            doc.text('QTD', margin + 110, yPosition + 8);
-            doc.text('VALOR UNIT.', margin + 130, yPosition + 8);
-            doc.text('TOTAL', margin + 160, yPosition + 8);
+            doc.text('ITEM', margin, yPosition);
+            doc.text('QTD', margin + 80, yPosition);
+            doc.text('VALOR UNIT.', margin + 110, yPosition);
+            doc.text('TOTAL', margin + 150, yPosition);
+            
+            // Linha abaixo do cabeçalho
+            yPosition += 5;
+            doc.setLineWidth(0.5);
+            doc.line(margin, yPosition, pageWidth - margin, yPosition);
+            yPosition += 10;
 
-            yPosition += 12;
-
-            // Itens da tabela
-            doc.setTextColor(...darkGray);
+            // Itens
             doc.setFont(undefined, 'normal');
             let totalGeral = 0;
-            let itemCount = 0;
 
-            itens.forEach(item => {
+            itens.forEach((item, index) => {
                 // Verificar se precisa de nova página
-                if (yPosition > pageHeight - 60) {
+                if (yPosition > 250) {
                     doc.addPage();
                     yPosition = 30;
                 }
 
-                // Alternar cor de fundo das linhas
-                if (itemCount % 2 === 0) {
-                    doc.setFillColor(250, 250, 250);
-                    doc.rect(margin, yPosition, pageWidth - 2 * margin, 10, 'F');
-                }
-
-                doc.text(item.descricao, margin + 3, yPosition + 7);
-                doc.text(item.quantidade.toString(), margin + 115, yPosition + 7, { align: 'center' });
-                doc.text(`R$ ${item.valorUnitario.toFixed(2).replace('.', ',')}`, margin + 145, yPosition + 7, { align: 'center' });
-                doc.text(`R$ ${item.valorTotal.toFixed(2).replace('.', ',')}`, margin + 175, yPosition + 7, { align: 'right' });
+                doc.text(`${index + 1}. ${item.descricao}`, margin, yPosition);
+                doc.text(item.quantidade.toString(), margin + 85, yPosition);
+                doc.text(`R$ ${item.valorUnitario.toFixed(2).replace('.', ',')}`, margin + 115, yPosition);
+                doc.text(`R$ ${item.valorTotal.toFixed(2).replace('.', ',')}`, margin + 155, yPosition);
                 
                 totalGeral += item.valorTotal;
-                yPosition += 10;
-                itemCount++;
+                yPosition += 8;
             });
 
-            // Linha separadora
-            doc.setDrawColor(...primaryGreen);
-            doc.setLineWidth(1);
-            doc.line(margin, yPosition + 2, pageWidth - margin, yPosition + 2);
+            // Linha antes do total
+            yPosition += 5;
+            doc.line(margin, yPosition, pageWidth - margin, yPosition);
             yPosition += 15;
 
-            // Total geral com destaque
-            doc.setFillColor(...lightGreen);
-            doc.rect(margin + 100, yPosition - 5, pageWidth - margin - 100, 15, 'F');
-            doc.setDrawColor(...primaryGreen);
-            doc.rect(margin + 100, yPosition - 5, pageWidth - margin - 100, 15, 'S');
-
-            doc.setFontSize(14);
+            // Total geral
+            doc.setFontSize(16);
             doc.setFont(undefined, 'bold');
-            doc.setTextColor(...primaryGreen);
-            doc.text('TOTAL GERAL:', margin + 105, yPosition + 5);
-            doc.text(`R$ ${totalGeral.toFixed(2).replace('.', ',')}`, pageWidth - margin - 5, yPosition + 5, { align: 'right' });
+            doc.text('TOTAL GERAL:', margin + 100, yPosition);
+            doc.text(`R$ ${totalGeral.toFixed(2).replace('.', ',')}`, margin + 155, yPosition);
 
             yPosition += 25;
 
             // Observações
             const observacoes = document.getElementById('observacoes').value.trim();
             if (observacoes) {
-                doc.setTextColor(...darkGray);
-                doc.setFontSize(10);
+                doc.setFontSize(12);
                 doc.setFont(undefined, 'bold');
                 doc.text('OBSERVAÇÕES:', margin, yPosition);
-                yPosition += 8;
+                yPosition += 10;
 
+                doc.setFontSize(10);
                 doc.setFont(undefined, 'normal');
                 const linhasObservacoes = doc.splitTextToSize(observacoes, pageWidth - 2 * margin);
                 doc.text(linhasObservacoes, margin, yPosition);
-                yPosition += linhasObservacoes.length * 5;
+                yPosition += linhasObservacoes.length * 5 + 10;
             }
 
-            // Rodapé
-            yPosition = pageHeight - 30;
-            doc.setDrawColor(...primaryGreen);
-            doc.line(margin, yPosition, pageWidth - margin, yPosition);
-            yPosition += 8;
-
+            // Rodapé simples
+            yPosition = 280;
             doc.setFontSize(9);
             doc.setTextColor(100, 100, 100);
             doc.text('Este orçamento tem validade de 30 dias.', margin, yPosition);
@@ -712,5 +655,5 @@
             e.target.value = value;
         });
     </script>
-<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'96a73827f58fe013',t:'MTc1NDQwNjYwNi4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'96a7446371665cb6',t:'MTc1NDQwNzEwNy4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
